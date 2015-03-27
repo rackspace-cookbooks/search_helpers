@@ -3,8 +3,6 @@
 # Cookbook Name:: search_helpers
 # Recipe:: default
 #
-# Copyright 2014, Rackspace
+# Copyright 2015, Rackspace
 #
-node.default['example']['attribute'] = 'lions, tigers'
-node.override['example']['attribute'] = 'lions, tigers and bears'
-log node['example']['attribute']
+Chef::Log.warn('search_helpers::default was included but does not do anything.')

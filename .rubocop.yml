@@ -38,6 +38,19 @@ WordArray:
 UnusedBlockArgument:
   Enabled: false
 
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/PerceivedComplexity:
+  Max: 15
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
 AllCops:
   Include:
     - '**/metadata.rb'
