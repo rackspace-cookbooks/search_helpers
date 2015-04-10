@@ -9,12 +9,13 @@ driver:
   name: vagrant # provide a default test-kitchen driver, vagrant
 
 driver_config:
-  require_chef_omnibus: latest
+  require_chef_omnibus: true
 
 provisioner:
   name: chef_zero
   client_rb:
     environment: _default
+  nodes_path: './test/fixtures/nodes'
   attributes:
     openssh:
       server:
@@ -53,6 +54,8 @@ platforms:
 
 suites:
   - name: default
-    run_list: recipe[search_helpers]
-    attributes:
-      foo: 'bar'
+    run_list:
+      - recipe[test_discovery::add]
+      - recipe[test_discovery::remove]
+      - recipe[test_discovery::default]
+      - recipe[test_discovery::compile_time]

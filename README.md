@@ -1,9 +1,7 @@
 # search_helpers
 
-Template for new stacks that includes best practices and default files for
-Rubocop, Foodcritic (including custom [Rackspace rules](https://github.com/AutomationSupport/foodcritic-rackspace-rules)),
-Rake, Thor, etc. Eventually, and ideally, this would be used by [stackbuilder](https://github.com/rackerlabs/stackbuilder)
-to initialize new stacks.
+search_helpers is a chef library cookbook designed to streamline common tasks in
+Chef that require search.
 
 ## [Changelog](CHANGELOG.md)
 
@@ -15,34 +13,78 @@ Ubuntu 12.04
 
 CentOS 6.5
 
-## Attributes
-
-Please describe any attributes exposed by this stack, and what the default values are. There shouldn't be any attributes without a default value (e.g. no required attributes, sensible defaults).
-
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['search_helpers']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
-
 ## Usage
 
 ### search_helpers::default
 
-This is where you should define what the default recipe does, if anything.
+Does not do anything.
 
-### search_helpers::bacon
+### discovery
 
-Please define what the other recipes do as well.
+Provides a rudimentary discovery mechanism on top of chef search, based on a tag
+model. Note that while the default implementation relies on underlying Chef
+tags, future implementations might not necessarily do so.
+
+The `discovery` resource and provider provides generic actions for applying tags
+to any Chef node, as well as enumerating other Chef nodes with a given tag or
+running a provided block on all nodes that have specific tags.
+
+Shared attributes supported by all actions of this resource include `tags` and
+`block`. The block attribute, by default, is nil. This means
+`node.run_state["discovery_#{new_resource.name}"]` will contain an array
+of nodes returned from the search. You may also pass a block to `data` and that
+block will be executed for each node returned from the search, in addition to
+the `node.run_state` being set.
+
+If you return a value from your block (instead of nil),
+`node.run_state["discovery_#{new_resource.name}"]` will be populated with an
+array of objects returned from the block.
+
+#### `:search`: Default action, Find a node with a particular array of tags
+
+```
+discovery 'my_cookbook_mysql_master' do
+  tags ['mysql', 'master']
+  action :search
+end
+found_master = node.run_state['discovery_my_cookbook_mysql_master'].first
+if found_master
+  Chef::Log.info("Found mysql master #{found_master}")
+else
+  Chef::Log.info('No mysql master was found')
+end  
+```
+
+Block example:
+```
+discovery 'find a mysql master' do
+  tags ['master', 'mysql']
+  block do |node|
+    node_ip = best_ip_for(node)
+    Chef::Log.warn("#{node.name} was found as a mysql master at #{node_ip}")
+    node_ip
+  end
+  action :search
+end
+```
+
+#### `:add`: Put this node into a particular haystack as a given needle
+
+```
+discovery 'add mysql master tag' do
+  tags ['master', 'mysql']
+  action :add
+end
+```
+
+#### `:remove`: Remove this node from a given haystack as a given needle
+
+```
+discovery 'no longer consider this node a mysql master' do
+  tags ['mysql', 'master']
+  action :remove
+end
+```
 
 ## Contributing
 
@@ -54,7 +96,7 @@ Author:: Rackspace (devops-chef@rackspace.com)
 
 ## License
 ```
-# Copyright 2014, Rackspace Hosting
+# Copyright 2015, Rackspace Hosting
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
