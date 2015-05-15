@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/rackspace-cookbooks/search_helpers.svg?style=svg)](https://circleci.com/gh/rackspace-cookbooks/search_helpers)
+
 # search_helpers
 
 search_helpers is a chef library cookbook designed to streamline common tasks in
@@ -9,15 +11,27 @@ See CHANGELOG.md for additional information about changes to this stack over tim
 
 ## Supported Platforms
 
-Ubuntu 12.04
-
-CentOS 6.5
+* Ubuntu 12.04
+* CentOS 6.5
 
 ## Usage
 
-### search_helpers::default
+Place a dependency on the search_helpers cookbook in your cookbook's metadata.rb
 
-Does not do anything.
+```
+depends 'search_helpers'
+```
+
+Then, in a recipe:
+
+```
+discovery 'my_cookbook_mysql_master' do
+  tags ['mysql', 'master']
+  action :search
+end
+```
+
+## Resource
 
 ### discovery
 
@@ -29,8 +43,13 @@ The `discovery` resource and provider provides generic actions for applying tags
 to any Chef node, as well as enumerating other Chef nodes with a given tag or
 running a provided block on all nodes that have specific tags.
 
-Shared attributes supported by all actions of this resource include `tags` and
-`block`. The block attribute, by default, is nil. This means
+#### Parameters
+
+* `tags` - List of tags to apply or search for.
+
+* `block` 
+
+The block attribute, by default, is nil. This means
 `node.run_state["discovery_#{new_resource.name}"]` will contain an array
 of nodes returned from the search. You may also pass a block to `data` and that
 block will be executed for each node returned from the search, in addition to
@@ -40,7 +59,15 @@ If you return a value from your block (instead of nil),
 `node.run_state["discovery_#{new_resource.name}"]` will be populated with an
 array of objects returned from the block.
 
-#### `:search`: Default action, Find a node with a particular array of tags
+#### Actions
+
+* `:search` - Default action, Find a node with a particular array of tags
+* `:add` - Apply tags to a node
+* `:remove`: Remove tags from a node
+
+### Examples
+
+#### Search and store the result in a `run_state` attribute :
 
 ```
 discovery 'my_cookbook_mysql_master' do
@@ -52,10 +79,11 @@ if found_master
   Chef::Log.info("Found mysql master #{found_master}")
 else
   Chef::Log.info('No mysql master was found')
-end  
+end
 ```
 
-Block example:
+#### Use the search result in a block to find nodes IPs :
+
 ```
 discovery 'find a mysql master' do
   tags ['master', 'mysql']
@@ -68,7 +96,7 @@ discovery 'find a mysql master' do
 end
 ```
 
-#### `:add`: Put this node into a particular haystack as a given needle
+#### Apply tags to a node
 
 ```
 discovery 'add mysql master tag' do
@@ -77,7 +105,7 @@ discovery 'add mysql master tag' do
 end
 ```
 
-#### `:remove`: Remove this node from a given haystack as a given needle
+#### Remove tags from a node
 
 ```
 discovery 'no longer consider this node a mysql master' do
@@ -86,9 +114,16 @@ discovery 'no longer consider this node a mysql master' do
 end
 ```
 
+
+
 ## Contributing
 
-See [CONTRIBUTING](https://github.com/AutomationSupport/search_helpers/blob/master/CONTRIBUTING.md).
+1. Fork the repository on Github
+2. Create a named feature branch (i.e. `add-new-recipe`)
+3. Write your change
+4. Write tests for your change (if applicable)
+5. Run the tests, ensuring they all pass
+6. Submit a Pull Request
 
 ## Authors
 
