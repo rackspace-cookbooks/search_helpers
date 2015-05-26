@@ -1,3 +1,5 @@
+require 'poise'
+
 class Chef
   class Resource::Discovery < Resource
     include Poise

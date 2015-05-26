@@ -1,3 +1,5 @@
+require 'poise'
+
 class Chef
   class Provider::Discovery < Provider
     include Poise
