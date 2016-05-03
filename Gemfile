@@ -1,16 +1,16 @@
 source 'https://rubygems.org'
 
 group :lint do
-  gem 'foodcritic', '~> 3.0'
+  gem 'foodcritic'
   gem 'foodcritic-rackspace-rules'
-  gem 'rubocop', '~> 0.24'
+  gem 'rubocop'
 end
 
 group :unit do
-  gem 'berkshelf', '~> 3'
+  gem 'berkshelf', '~> 4'
   gem 'chefspec'
+  gem 'ruby-shadow'
   gem 'chef-sugar'
-  gem 'chef', '~> 12.1'
 end
 
 group :kitchen_common do

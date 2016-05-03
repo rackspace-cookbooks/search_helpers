@@ -48,7 +48,7 @@ platforms:
   - name: ubuntu-12.04
     run_list:
     - recipe[apt]
-  - name: centos-6.6
+  - name: centos-6.7
     run_list:
     - recipe[yum]
 

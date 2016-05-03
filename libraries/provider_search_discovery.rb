@@ -67,7 +67,7 @@ class Chef
 
     def sanity_checks
       return unless Chef::Config[:solo]
-      fail 'Cannot use search_discovery with chef_solo, please guard in your recipe'
+      raise 'Cannot use search_discovery with chef_solo, please guard in your recipe'
     end
   end
 end
